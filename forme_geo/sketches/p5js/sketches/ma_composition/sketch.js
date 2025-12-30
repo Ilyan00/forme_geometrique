@@ -14,7 +14,7 @@ function constrainCoord(value) {
 // Fonction pour créer des motifs fractals récursifs
 function dessinerFractal(X, Y, taille, profondeur, angle) {
   if (profondeur <= 0 || taille < 5) return;
-  
+
   // Dessiner un polygone à cette profondeur
   let sides = 6;
   for (let i = 0; i < sides; i++) {
@@ -23,13 +23,13 @@ function dessinerFractal(X, Y, taille, profondeur, angle) {
     let y1 = constrainCoord(Y + taille * sin(a));
     let x2 = constrainCoord(X + taille * 0.5 * cos(a + PI / sides));
     let y2 = constrainCoord(Y + taille * 0.5 * sin(a + PI / sides));
-    
+
     if (i == 0) LPRINT(`M${int(x1)},${int(y1)}`);
     else LPRINT(`D${int(x1)},${int(y1)}`);
     LPRINT(`D${int(x2)},${int(y2)}`);
   }
   LPRINT(`D${int(X + taille * cos(angle))},${int(Y + taille * sin(angle))}`);
-  
+
   // Récursion pour créer des sous-motifs
   if (profondeur > 1) {
     for (let i = 0; i < sides; i++) {
@@ -55,25 +55,36 @@ function spiraleLogarithmique(CX, CY, a, b, tours, points) {
 }
 
 // Fonction pour créer des motifs en étoile complexe avec branches
-function etoileComplexe(CX, CY, branches, rayonExterne, rayonInterne, iterations) {
+function etoileComplexe(
+  CX,
+  CY,
+  branches,
+  rayonExterne,
+  rayonInterne,
+  iterations
+) {
   for (let iter = 0; iter < iterations; iter++) {
     let scale = 1 - iter * 0.2;
     let rExt = rayonExterne * scale;
     let rInt = rayonInterne * scale;
-    
+
     for (let b = 0; b < branches; b++) {
       let angle1 = (2 * PI * b) / branches;
       let angle2 = (2 * PI * (b + 0.5)) / branches;
-      
+
       let x1 = constrainCoord(CX + rExt * cos(angle1));
       let y1 = constrainCoord(CY + rExt * sin(angle1));
       let x2 = constrainCoord(CX + rInt * cos(angle2));
       let y2 = constrainCoord(CY + rInt * sin(angle2));
-      
+
       if (b == 0 && iter == 0) LPRINT(`M${int(x1)},${int(y1)}`);
       else LPRINT(`M${int(x1)},${int(y1)}`);
       LPRINT(`D${int(x2)},${int(y2)}`);
-      LPRINT(`D${int(CX + rExt * cos(angle1 + 2 * PI / branches))},${int(CY + rExt * sin(angle1 + 2 * PI / branches))}`);
+      LPRINT(
+        `D${int(CX + rExt * cos(angle1 + (2 * PI) / branches))},${int(
+          CY + rExt * sin(angle1 + (2 * PI) / branches)
+        )}`
+      );
     }
   }
 }
@@ -94,14 +105,7 @@ function dessiner() {
     let angleOffset = (s * 2 * PI) / 7;
     let offsetX = NP * 0.15 * cos(angleOffset);
     let offsetY = NP * 0.15 * sin(angleOffset);
-    spiraleLogarithmique(
-      DX + offsetX,
-      DY + offsetY,
-      NP * 0.05,
-      0.08,
-      3,
-      150
-    );
+    spiraleLogarithmique(DX + offsetX, DY + offsetY, NP * 0.05, 0.08, 3, 150);
   }
   TRACE();
 
@@ -166,19 +170,27 @@ function dessiner() {
     let maxLength = min(NP * 0.38, NP / 2 - startRadius);
     let variation = 0.25 + 0.75 * abs(sin(angle * 4));
     let length = startRadius + maxLength * variation;
-    
+
     // Créer un motif en zigzag le long de la ligne
     let segments = 8;
     let prevX = int(constrainCoord(DX + startRadius * cos(angle)));
     let prevY = int(constrainCoord(DY + startRadius * sin(angle)));
     LPRINT(`M${prevX},${prevY}`);
-    
+
     for (let seg = 1; seg <= segments; seg++) {
       let t = seg / segments;
       let rCurrent = startRadius + (length - startRadius) * t;
       let zigzag = NP * 0.015 * sin(t * 12 * PI + angle * 3);
-      let X = int(constrainCoord(DX + rCurrent * cos(angle) + zigzag * cos(angle + PI / 2)));
-      let Y = int(constrainCoord(DY + rCurrent * sin(angle) + zigzag * sin(angle + PI / 2)));
+      let X = int(
+        constrainCoord(
+          DX + rCurrent * cos(angle) + zigzag * cos(angle + PI / 2)
+        )
+      );
+      let Y = int(
+        constrainCoord(
+          DY + rCurrent * sin(angle) + zigzag * sin(angle + PI / 2)
+        )
+      );
       LPRINT(`D${X},${Y}`);
     }
   }
@@ -283,8 +295,12 @@ function dessiner() {
       let angle = (2 * PI * e) / elements;
       let x1 = constrainCoord(DX + layerRadius * cos(angle));
       let y1 = constrainCoord(DY + layerRadius * sin(angle));
-      let x2 = constrainCoord(DX + (layerRadius + NP * 0.02) * cos(angle + PI / elements));
-      let y2 = constrainCoord(DY + (layerRadius + NP * 0.02) * sin(angle + PI / elements));
+      let x2 = constrainCoord(
+        DX + (layerRadius + NP * 0.02) * cos(angle + PI / elements)
+      );
+      let y2 = constrainCoord(
+        DY + (layerRadius + NP * 0.02) * sin(angle + PI / elements)
+      );
       if (e == 0 && layer == 0) LPRINT(`M${int(x1)},${int(y1)}`);
       else LPRINT(`M${int(x1)},${int(y1)}`);
       LPRINT(`D${int(x2)},${int(y2)}`);
@@ -303,7 +319,7 @@ function dessiner() {
     let CX = constrainCoord(DX + outerRadius * cos(angle));
     let CY = constrainCoord(DY + outerRadius * sin(angle));
     GOSUB_ETOILES_REGULIERES(CX, CY, 6, 2, NP * 0.04, angle);
-    
+
     // Ajouter des traits connecteurs
     if (s % 2 == 0) {
       let nextAngle = (2 * PI * (s + 2)) / outerStarCount;
